@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE users (
+                id BIGSERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                image VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="2" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE boards (
+                id BIGSERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE board_members (
+                board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE,
+                user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+                role INTEGER NOT NULL,
+                PRIMARY KEY (board_id, user_id)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="4" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE lists (
+                id BIGSERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE,
+                position INTEGER NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="5" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE cards (
+                id BIGSERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                list_id BIGINT REFERENCES lists(id) ON DELETE CASCADE,
+                position INTEGER NOT NULL,
+                due_date DATE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="6" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE labels (
+                id BIGSERIAL PRIMARY KEY,
+                name VARCHAR(50) NOT NULL,
+                color VARCHAR(7) NOT NULL,
+                board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="7" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE card_labels (
+                card_id BIGINT REFERENCES cards(id) ON DELETE CASCADE,
+                label_id BIGINT REFERENCES labels(id) ON DELETE CASCADE,
+                PRIMARY KEY (card_id, label_id)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="8" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE comments (
+                id BIGSERIAL PRIMARY KEY,
+                content TEXT NOT NULL,
+                card_id BIGINT REFERENCES cards(id) ON DELETE CASCADE,
+                user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="9" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE assignments (
+                card_id BIGINT REFERENCES cards(id) ON DELETE CASCADE,
+                user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+                PRIMARY KEY (card_id, user_id)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="10" author="kaciel.riff">
+        <sql dbms="postgresql">
+            CREATE TABLE activities (
+                 id BIGSERIAL PRIMARY KEY,
+                 action VARCHAR(255) NOT NULL,
+                 user_id BIGINT REFERENCES users(id),
+                 card_id BIGINT REFERENCES cards(id),
+                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>
