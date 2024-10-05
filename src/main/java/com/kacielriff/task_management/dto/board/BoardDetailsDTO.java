@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardDetailsWithMemberDTO {
+public class BoardDetailsDTO {
     @Schema(description = "ID do board", example = "1")
     private Long id;
 

@@ -11,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleMemberDTO {
-    @Schema(description = "ID do board", example = "1")
+    @Schema(description = "ID do membro", example = "1")
     private Long id;
 
-    @Schema(description = "Nome do board", example = "Projeto X")
+    @Schema(description = "Nome do membro", example = "Fulano da Silva")
     private String name;
 }

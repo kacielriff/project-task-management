@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
@@ -30,6 +31,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            System.out.println("\n\n\n" + e.getMessage() + "\n\n\n" + Arrays.toString(e.getStackTrace()) + "\n\n\n");
             throw new RuntimeException("Token inválido");
         }
     }
