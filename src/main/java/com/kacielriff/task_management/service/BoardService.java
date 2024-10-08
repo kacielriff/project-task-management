@@ -5,6 +5,7 @@ import com.kacielriff.task_management.dto.board.CreateBoardDTO;
 import com.kacielriff.task_management.dto.board.SimpleBoardDTO;
 import com.kacielriff.task_management.dto.member.MemberWithRoleDTO;
 import com.kacielriff.task_management.dto.member.SimpleMemberDTO;
+import com.kacielriff.task_management.dto.shared.MessageDTO;
 import com.kacielriff.task_management.dto.shared.PageDTO;
 import com.kacielriff.task_management.dto.user.LoggedUserDTO;
 import com.kacielriff.task_management.entity.Board;
@@ -16,9 +17,11 @@ import com.kacielriff.task_management.exception.ConflictException;
 import com.kacielriff.task_management.exception.NotFoundException;
 import com.kacielriff.task_management.exception.UnauthorizedException;
 import com.kacielriff.task_management.repository.BoardRepository;
+import com.kacielriff.task_management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,10 +83,46 @@ public class BoardService {
             throw new ConflictException("Usuário já possui um board com este nome.");
         }
 
-        Board newBoard = saveNewBoard(createBoardDTO.getName());
+        Board newBoard = saveBoard(createBoardDTO.getName());
         BoardMember savedBoardMember = addOwnerToBoard(newBoard, userId);
 
         return convertToBoardDetailsDTO(savedBoardMember, Collections.emptyList());
+    }
+
+    public BoardDetailsDTO edit(Long boardId, CreateBoardDTO createBoardDTO) throws Exception {
+        Long userId = userService.getIdLoggedUser();
+
+        if (!boardMemberService.isUserOwnerOfBoard(boardId, userId)) {
+            throw new UnauthorizedException("Você não é dono deste board.");
+        }
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NotFoundException("Board não encontrado."));
+
+        board.setName(createBoardDTO.getName());
+
+        boardRepository.save(board);
+
+        List<BoardMember> boardMembers = boardMemberService.getBoardWithMembers(boardId);
+
+        // filtra os outros membros (exceto owner)
+        List<MemberWithRoleDTO> members = boardMembers.stream()
+                .filter(bm -> bm.getRole() != MemberRole.OWNER)
+                .map(bm -> new MemberWithRoleDTO(bm.getUser().getId(), bm.getUser().getName(), bm.getRole()))
+                .collect(Collectors.toList());
+
+        return convertToBoardDetailsDTO(boardMemberService.getWhereUserIsOwner(boardId), members);
+    }
+
+    @Transactional
+    public MessageDTO delete(Long boardId) throws Exception {
+        if (!boardMemberService.isUserOwnerOfBoard(boardId, userService.getIdLoggedUser())) {
+            throw new UnauthorizedException("Você não é dono deste board.");
+        }
+
+        boardRepository.deleteAllById(boardId);
+
+        return new MessageDTO("Board excluído com sucesso.");
     }
 
     private <T> PageDTO<T> emptyPage(Pageable pageable) {
@@ -105,19 +144,18 @@ public class BoardService {
         return ownedBoards.stream().anyMatch(bm -> bm.getBoard().getName().equals(boardName));
     }
 
-    private Board saveNewBoard(String boardName) {
+    private Board saveBoard(String boardName) {
         Board board = new Board();
         board.setName(boardName);
         return boardRepository.save(board);
     }
 
     private BoardMember addOwnerToBoard(Board board, Long userId) throws Exception {
-        User user = new User();
-        user.setId(userId);
+        User user = userService.getById(userId);
 
         BoardMemberPK boardMemberPK = new BoardMemberPK();
         boardMemberPK.setBoardId(board.getId());
-        boardMemberPK.setUserId(userId);
+        boardMemberPK.setUserId(user.getId());
 
         BoardMember boardMember = new BoardMember();
         boardMember.setId(boardMemberPK);

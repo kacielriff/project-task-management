@@ -20,12 +20,12 @@ public class BoardMember {
     @EmbeddedId
     private BoardMemberPK id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("boardId")
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("userId")
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

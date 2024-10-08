@@ -3,6 +3,7 @@ package com.kacielriff.task_management.controller;
 import com.kacielriff.task_management.dto.board.BoardDetailsDTO;
 import com.kacielriff.task_management.dto.board.CreateBoardDTO;
 import com.kacielriff.task_management.dto.board.SimpleBoardDTO;
+import com.kacielriff.task_management.dto.shared.MessageDTO;
 import com.kacielriff.task_management.dto.shared.PageDTO;
 import com.kacielriff.task_management.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,20 @@ public class BoardController {
 
     @PostMapping
     public ResponseEntity<BoardDetailsDTO> create(
-                @RequestBody @Valid CreateBoardDTO createBoardDTO) throws Exception {
+            @RequestBody @Valid CreateBoardDTO createBoardDTO) throws Exception {
         return new ResponseEntity<>(boardService.create(createBoardDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<BoardDetailsDTO> edit(
+            @RequestParam(value = "id", required = true) @Positive Long boardId,
+            @RequestBody @Valid CreateBoardDTO createBoardDTO) throws Exception {
+        return new ResponseEntity<>(boardService.edit(boardId, createBoardDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<MessageDTO> delete(
+            @RequestParam(value = "id", required = true) @Positive Long boardId) throws Exception {
+        return new ResponseEntity<>(boardService.delete(boardId), HttpStatus.OK);
     }
 }

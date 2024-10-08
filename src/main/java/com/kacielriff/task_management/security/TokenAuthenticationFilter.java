@@ -31,7 +31,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            System.out.println("\n\n\n" + e.getMessage() + "\n\n\n" + Arrays.toString(e.getStackTrace()) + "\n\n\n");
+            e.printStackTrace();
             throw new RuntimeException("Token inválido");
         }
     }

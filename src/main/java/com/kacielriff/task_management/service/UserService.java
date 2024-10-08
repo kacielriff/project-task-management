@@ -132,4 +132,9 @@ public class UserService {
 
         return Long.valueOf((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
+
+    protected User getById(Long userId) throws Exception {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
+    }
 }
