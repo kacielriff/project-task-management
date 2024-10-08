@@ -92,3 +92,51 @@ A Task Management API é uma aplicação desenvolvida em Java com Spring Framewo
 - **PUT /boards:** Edita um quadro.
 - **DELETE /boards:** Exclui um quadro.
 - **GET /boards/list-user-boards:** Listar os quadros que o usuário faz parte.
+
+## Estrutura do Projeto
+
+O projeto segue uma estrutura modular utilizando o padrao MVC: 
+
+```
+📦src
+ ┣ 📂main
+ ┃ ┣ 📂java
+ ┃ ┃ ┗ 📂com
+ ┃ ┃   ┗ 📂kacielriff
+ ┃ ┃     ┗ 📂task_management
+ ┃ ┃       ┣ 📂config
+ ┃ ┃       ┣ 📂controller
+ ┃ ┃       ┣ 📂docs
+ ┃ ┃       ┣ 📂dto
+ ┃ ┃       ┣ 📂entity
+ ┃ ┃       ┣ 📂exception
+ ┃ ┃       ┣ 📂repository
+ ┃ ┃       ┣ 📂security
+ ┃ ┃       ┣ 📂service
+ ┃ ┃       ┗ 📜TaskManagementApplication.java
+ ┃ ┗ 📂resources
+ ┃   ┣ 📂db
+ ┃   ┃ ┗ 📂changelog
+ ┃   ┃   ┗ 📂migrations
+ ┃   ┗ 📂templates
+ ┗ 📂test
+   ┗ 📂java
+     ┗ 📂com
+       ┗ 📂kacielriff
+         ┗ 📂task_management
+           ┗ 📂service
+```
+
+## Contribuição
+
+Contribuições são bem-vindas! Siga os passos abaixo para colaborar:
+
+   1. Faça um fork do projeto.
+   2. Crie uma branch com sua feature: `git checkout -b feat/minha-feature`.
+   3. Commit suas mudanças: `git commit -m 'add: adiciona minha feature'`.
+   4. Faça um push para a branch: `git push origin feat/minha-feature`.
+   5. Abra um Pull Request.
+
+## Licença
+
+Este projeto está licenciado sob a <a href="./LICENSE">MIT License</a>.
