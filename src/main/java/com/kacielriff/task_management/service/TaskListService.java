@@ -26,6 +26,7 @@ public class TaskListService {
     private final UserService userService;
     private final BoardService boardService;
     private final BoardMemberService boardMemberService;
+    private final CardService cardService;
 
     public List<SimpleListDTO> list() {
         List<TaskList> lists = taskListRepository.findAll();
@@ -85,15 +86,32 @@ public class TaskListService {
         TaskList list = taskListRepository.findById(listId)
                 .orElseThrow(() -> new NotFoundException("Lista não encontrada."));
 
-        if (Objects.equals(list.getPosition(), createListDTO.getPosition())) {
+        Integer oldPosition = list.getPosition();
+        Integer newPosition = createListDTO.getPosition();
+
+        if (Objects.equals(oldPosition, newPosition)) {
             list.setName(createListDTO.getName());
             taskListRepository.save(list);
-        }
+        } else {
+            List<TaskList> lists = taskListRepository.findAll();
 
-        // TODO:
-        //      fazer parte que altera a posicao das listas
-        //      levar em conta que a lista pode ser movida para frente
-        //      e para trás
+            if (newPosition > oldPosition) {
+                lists.stream()
+                        .filter(l -> !Objects.equals(l.getId(), list.getId()))
+                        .filter(l -> l.getPosition() > oldPosition && l.getPosition() <= newPosition)
+                        .forEach(l -> l.setPosition(l.getPosition() - 1));
+            } else {
+                lists.stream()
+                        .filter(l -> l.getPosition() < oldPosition && l.getPosition() >= newPosition)
+                        .forEach(l -> l.setPosition(l.getPosition() + 1));
+            }
+
+            list.setName(createListDTO.getName());
+            list.setPosition(newPosition);
+            taskListRepository.save(list);
+
+            taskListRepository.saveAll(lists);
+        }
 
         return taskListRepository.findAll()
                 .stream()
@@ -110,12 +128,11 @@ public class TaskListService {
             throw new UnauthorizedException("Usuário não é dono deste board.");
         }
 
-        taskListRepository.deleteAllById(listId);
+        if (cardService.doesListHaveCards(listId)) {
+            throw new ConflictException("A lista não pode ser excluída porque ainda possui cards.");
+        }
 
-        // TODO:
-        //      fazer o delete em cascata dos cards ou alterar a lógica
-        //      para não permitir a deleção de uma lista que contenha cards
-        //      (segunda opção é mais segura e intuitiva para evitar erros humanos)
+        taskListRepository.deleteAllById(listId);
 
         return new MessageDTO("Lista excluída com sucesso.");
     }
