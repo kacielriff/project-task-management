@@ -144,7 +144,7 @@ Contribuições são bem-vindas! Siga os passos abaixo para colaborar:
    1. Faça um fork do projeto.
    2. Crie uma branch com sua feature: `git checkout -b feat/minha-feature`.
    3. Commit suas mudanças: `git commit -m 'add: adiciona minha feature'`.
-   4. Faça um push para a branch: `git push origin feat/minha-feature`.
+   4. Faça um push para a branch: `git push -u origin feat/minha-feature`.
    5. Abra um Pull Request.
 
 ## Licença
