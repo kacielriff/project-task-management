@@ -7,7 +7,6 @@ import com.kacielriff.task_management.dto.member.MemberWithRoleDTO;
 import com.kacielriff.task_management.dto.member.SimpleMemberDTO;
 import com.kacielriff.task_management.dto.shared.MessageDTO;
 import com.kacielriff.task_management.dto.shared.PageDTO;
-import com.kacielriff.task_management.dto.user.LoggedUserDTO;
 import com.kacielriff.task_management.entity.Board;
 import com.kacielriff.task_management.entity.BoardMember;
 import com.kacielriff.task_management.entity.User;
@@ -17,9 +16,10 @@ import com.kacielriff.task_management.exception.ConflictException;
 import com.kacielriff.task_management.exception.NotFoundException;
 import com.kacielriff.task_management.exception.UnauthorizedException;
 import com.kacielriff.task_management.repository.BoardRepository;
-import com.kacielriff.task_management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,6 +123,11 @@ public class BoardService {
         boardRepository.deleteAllById(boardId);
 
         return new MessageDTO("Board excluído com sucesso.");
+    }
+
+    protected Board getById(Long boardId) throws Exception {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new NotFoundException("Board não encontado."));
     }
 
     private <T> PageDTO<T> emptyPage(Pageable pageable) {

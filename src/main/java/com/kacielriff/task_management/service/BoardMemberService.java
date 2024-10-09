@@ -1,6 +1,5 @@
 package com.kacielriff.task_management.service;
 
-import com.kacielriff.task_management.dto.board.BoardDetailsDTO;
 import com.kacielriff.task_management.entity.BoardMember;
 import com.kacielriff.task_management.entity.enums.MemberRole;
 import com.kacielriff.task_management.exception.NotFoundException;

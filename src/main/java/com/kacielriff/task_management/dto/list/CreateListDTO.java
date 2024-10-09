@@ -1,4 +1,4 @@
-package com.kacielriff.task_management.dto.board;
+package com.kacielriff.task_management.dto.list;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -15,10 +15,20 @@ import javax.validation.constraints.Size;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateBoardDTO {
+public class CreateListDTO {
     @NotNull(message = "Campo obrigatório")
     @NotBlank(message = "Campo obrigatório")
     @Size(min = 3, max = 255, message = "Nome deve ter no mínimo 3 caracteres e no máximo 255 caracteres")
     @Schema(description = "Nome do board", example = "Projeto X")
     private String name;
+
+    @NotNull(message = "Campo obrigatório")
+    @NotBlank(message = "Campo obrigatório")
+    @Positive(message = "Posição deve ser um número valido positivo")
+    private Integer position;
+
+    @NotNull(message = "Campo obrigatório")
+    @NotBlank(message = "Campo obrigatório")
+    @Positive(message = "Board ID deve ser um número valido positivo")
+    private Long boardId;
 }

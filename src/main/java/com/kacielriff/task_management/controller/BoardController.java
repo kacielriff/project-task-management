@@ -1,5 +1,6 @@
 package com.kacielriff.task_management.controller;
 
+import com.kacielriff.task_management.docs.BoardControllerDocs;
 import com.kacielriff.task_management.dto.board.BoardDetailsDTO;
 import com.kacielriff.task_management.dto.board.CreateBoardDTO;
 import com.kacielriff.task_management.dto.board.SimpleBoardDTO;
@@ -20,12 +21,12 @@ import javax.validation.constraints.PositiveOrZero;
 @RequestMapping("/board")
 @Validated
 @RequiredArgsConstructor
-public class BoardController {
+public class BoardController implements BoardControllerDocs {
     private final BoardService boardService;
 
-    @GetMapping
+    @GetMapping("/{boardId}")
     public ResponseEntity<BoardDetailsDTO> listById(
-            @RequestParam(value = "id", required = true) @Positive Long boardId) throws Exception {
+            @PathVariable("boardId") @Positive Long boardId) throws Exception {
         return new ResponseEntity<>(boardService.listBoardWithMembers(boardId), HttpStatus.OK);
     }
 
@@ -42,16 +43,16 @@ public class BoardController {
         return new ResponseEntity<>(boardService.create(createBoardDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/{boardId}")
     public ResponseEntity<BoardDetailsDTO> edit(
-            @RequestParam(value = "id", required = true) @Positive Long boardId,
+            @PathVariable("boardId") @Positive Long boardId,
             @RequestBody @Valid CreateBoardDTO createBoardDTO) throws Exception {
         return new ResponseEntity<>(boardService.edit(boardId, createBoardDTO), HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{boardId}")
     public ResponseEntity<MessageDTO> delete(
-            @RequestParam(value = "id", required = true) @Positive Long boardId) throws Exception {
+            @PathVariable("boardId") @Positive Long boardId) throws Exception {
         return new ResponseEntity<>(boardService.delete(boardId), HttpStatus.OK);
     }
 }
